@@ -1,5 +1,13 @@
 <?php
 
+// ###### Déclarer session ###### (obligatoire au début de notre site)
+
+session_start();
+
+
+
+
+
 try {
     
     $type_bdd = "mysql";

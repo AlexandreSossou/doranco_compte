@@ -24,11 +24,11 @@ if (!empty($_POST)) {
             $errorMessage .= "Merci d'indiquer un mot de passe de minimum 8 caractères. <br>";
         }
 
-        if (empty($_POST['lastname']) || iconv_strlen(trim($_POST['lastname'])) < 70 ) {
+        if (empty($_POST['lastname']) || iconv_strlen(trim($_POST['lastname'])) > 70 ) {
             $errorMessage .= "Merci d'indiquer un nom de max 70 caractères. <br>";
         }
 
-        if (empty($_POST['firstname']) || iconv_strlen(trim($_POST['firstname'])) < 70 ) {
+        if (empty($_POST['firstname']) || iconv_strlen(trim($_POST['firstname'])) > 70 ) {
             $errorMessage .= "Merci d'indiquer un prénom de max 70 caractères. <br>";
         }
         if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) ) {
@@ -39,7 +39,8 @@ if (!empty($_POST)) {
     // ###### ETAPE DE SÉCURISATION DES DONNÉES #####
         //$_POST['username'] = htmlspecialchars($_POST['username']); méthode longue (car doit être dupliqué...)
         foreach($_POST as $key => $value) {
-            $_POST[$key] = htmlspecialchars($value, ENT_QUOTES);  // méthode rapide.
+            $_POST[$key] = htmlspecialchars($value, ENT_QUOTES);  // méthode rapide. transforme les chevrons et guillemets en leur entité html.
+        // ##### obligatoire si l'on récupère des données utilisateurs.
         }
     // ###### FIN DE SÉCURISATION des données ######
 
@@ -58,10 +59,22 @@ if (!empty($_POST)) {
 
     if ($success) {
         $successMessage = "Inscription successful";
+
+        // Introduction a la session : Fichier temporaire appelé sess_***** qui est stocké sur le serveur. Chaque fichier est lié a un internaute
+
+        // On déclare la session avec session_start()
+        // Le fichier de session peut contenir toutes sorte d'information, y compris des info sensible. (mdp, carte bancaire etc) 
+        //car ce fichier n'est pas accessible par l'utilisateur
+        // Une fois session_start() est lu on a accès à la superglobale $_session pour récup les infos ou en ajouter. 
+        //Pour ajoute une info on appele $_session suivi d'un indice et de sa valeur. si l'indice existe déjà ça valeur sera remplacer sinon elle sera créée.
+        // Les info présente dans la session ne sont pas supprimer automatiquement mais par la fonction unset()
+
+
+        $_SESSION["successMessage"] = "Inscription successful";
         
         // si ma requete a fonctionné je veux être redirigé vers la page de connexion
         header("location:connexion.php");
-        exit;
+        exit; // après la fonction header on place régulièrement une execution exit. pour éviter le hacking.
     } else {
         $errorMessage = "Inscription failed";
     }

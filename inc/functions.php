@@ -5,3 +5,8 @@ function debug($value) {
         print_r($value);
     echo "</pre>";
 }        
+
+function isConnected($value):bool 
+{
+    return isset($_SESSION['membre']) ? TRUE : FALSE;
+}
